@@ -21,3 +21,17 @@ export async function createApplication(formData: Object) {
     throw error;
   }
 }
+
+export async function getApplications() {
+  try {
+    const response = await fetch(`${URL}/application.json`);
+
+    if (!response.ok) throw new Error("failed to fetch data");
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error creating the Application:", error);
+    throw error;
+  }
+}

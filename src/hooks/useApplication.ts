@@ -1,5 +1,8 @@
-import { useMutation, useQueryClient } from "@tanstack/vue-query";
-import { createApplication as createApplicationApi } from "../services/serviceApi";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/vue-query";
+import {
+  createApplication as createApplicationApi,
+  getApplications,
+} from "../services/serviceApi";
 export function useCreateApplication() {
   const queryClient = useQueryClient();
   const { mutate: createApplication, isPending } = useMutation({
@@ -10,4 +13,13 @@ export function useCreateApplication() {
   });
 
   return { createApplication, isPending };
+}
+
+export function useApplications() {
+  const { data: applications, isPending } = useQuery({
+    queryKey: ["applications"],
+    queryFn: getApplications,
+  });
+
+  return { applications, isPending };
 }
