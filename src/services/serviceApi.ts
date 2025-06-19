@@ -29,7 +29,11 @@ export async function getApplications() {
     if (!response.ok) throw new Error("failed to fetch data");
 
     const data = await response.json();
-    return data;
+
+    return Object.entries(data || {}).map(([id, value]: [string, any]) => ({
+      id,
+      ...value,
+    }));
   } catch (error) {
     console.error("Error creating the Application:", error);
     throw error;

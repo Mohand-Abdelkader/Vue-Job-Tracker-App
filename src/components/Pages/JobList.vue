@@ -1,53 +1,44 @@
 <template>
-  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-    <h2 class="text-xl font-semibold text-gray-800 mb-4">
-      All Job Applications
-    </h2>
-    <div class="flex justify-center align-middle mt-5" v-if="isPending">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Header -->
+    <div
+      class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4"
+    >
+      <h2 class="text-2xl font-semibold text-gray-800">All Job Applications</h2>
+
+      <!-- Filter -->
+      <Select v-model="selectedStatus" />
+    </div>
+
+    <div class="flex justify-center items-center py-10" v-if="isPending">
       <Loader />
     </div>
-    <div v-else class="overflow-x-auto bg-white shadow-md rounded-lg">
-      <table class="min-w-full text-sm text-left text-gray-700">
+
+    <div v-else class="overflow-x-auto bg-white shadow rounded-lg">
+      <table
+        class="min-w-full divide-y divide-gray-200 text-sm text-left text-gray-700"
+      >
         <thead class="bg-gray-100 text-xs uppercase text-gray-600">
           <tr>
-            <th scope="col" class="px-6 py-3">Company</th>
-            <th scope="col" class="px-6 py-3">Job Title</th>
-            <th scope="col" class="px-6 py-3">Status</th>
-            <th scope="col" class="px-6 py-3">Applied Date</th>
-            <th scope="col" class="px-6 py-3">Actions</th>
+            <th class="px-6 py-3">Company</th>
+            <th class="px-6 py-3">Job Title</th>
+            <th class="px-6 py-3">Status</th>
+            <th class="px-6 py-3">Applied Date</th>
+            <th class="px-6 py-3">Actions</th>
           </tr>
         </thead>
         <tbody>
           <tr
-            v-for="job in jobs"
+            v-for="job in filteredJobs"
             :key="job.id"
-            class="border-b hover:bg-gray-50"
+            class="border-b hover:bg-gray-50 transition-colors"
           >
-            <td class="px-6 py-4 font-medium text-gray-900">
-              {{ job.company }}
-            </td>
-            <td class="px-6 py-4">{{ job.title }}</td>
-            <td class="px-6 py-4">
-              <span
-                class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium"
-                :class="getStatusStyle(job.status)"
-              >
-                {{ job.status }}
-              </span>
-            </td>
-            <td class="px-6 py-4">{{ formatDate(job.dateApplied) }}</td>
-            <td class="px-6 py-4">
-              <a
-                :href="job.url"
-                target="_blank"
-                class="text-blue-600 hover:underline"
-              >
-                View
-              </a>
-            </td>
+            <Row :job="job" />
           </tr>
-          <tr v-if="jobs.length === 0">
-            <td colspan="5" class="text-center py-4 text-gray-400">
+
+          <!-- No Data -->
+          <tr v-if="filteredJobs?.length === 0">
+            <td colspan="5" class="text-center py-6 text-gray-400">
               No applications found.
             </td>
           </tr>
@@ -58,42 +49,27 @@
 </template>
 
 <script setup lang="ts">
+import Row from "../ui/Row.vue";
+import Select from "../ui/Select.vue";
+
 import { useApplications } from "../../hooks/useApplication";
 import Loader from "../ui/Loader.vue";
+import { computed, ref } from "vue";
 
-defineProps<{
-  jobs: {
-    id: string | number;
-    company: string;
-    title: string;
-    status: string;
-    dateApplied: string;
-    url: string;
-  }[];
-}>();
+type Job = {
+  id: string | number;
+  company: string;
+  title: string;
+  status: string;
+  dateApplied: string;
+  url: string;
+};
 
 const { applications: jobs, isPending } = useApplications();
+const selectedStatus = ref("all");
 
-function formatDate(date: string) {
-  return new Date(date).toLocaleDateString("en-GB", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-  });
-}
-
-function getStatusStyle(status: string) {
-  switch (status) {
-    case "Applied":
-      return "bg-blue-100 text-blue-800";
-    case "Interviewing":
-      return "bg-yellow-100 text-yellow-800";
-    case "Offer":
-      return "bg-green-100 text-green-800";
-    case "Rejected":
-      return "bg-red-100 text-red-800";
-    default:
-      return "bg-gray-100 text-gray-700";
-  }
-}
+const filteredJobs = computed(() => {
+  if (selectedStatus.value === "all") return jobs.value;
+  return jobs.value?.filter((job: Job) => job.status === selectedStatus.value);
+});
 </script>
