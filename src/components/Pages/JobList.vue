@@ -7,7 +7,8 @@
       <h2 class="text-2xl font-semibold text-gray-800">All Job Applications</h2>
 
       <!-- Filter -->
-      <Select v-model="selectedStatus" />
+      <!-- <Select v-model="selectedStatus" /> -->
+      <Select @change-value="changeFilter" />
     </div>
 
     <div class="flex justify-center items-center py-10" v-if="isPending">
@@ -28,14 +29,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr
-            v-for="job in filteredJobs"
-            :key="job.id"
-            class="border-b hover:bg-gray-50 transition-colors"
-          >
-            <Row :job="job" />
-          </tr>
-
+          <Row v-for="job in filteredJobs" :job="job" :key="job.id" />
           <!-- No Data -->
           <tr v-if="filteredJobs?.length === 0">
             <td colspan="5" class="text-center py-6 text-gray-400">
@@ -64,12 +58,14 @@ type Job = {
   dateApplied: string;
   url: string;
 };
-
+function changeFilter(val: string) {
+  selectedStatus.value = val;
+}
 const { applications: jobs, isPending } = useApplications();
-const selectedStatus = ref("all");
+const selectedStatus = ref("All");
 
 const filteredJobs = computed(() => {
-  if (selectedStatus.value === "all") return jobs.value;
+  if (selectedStatus.value === "All") return jobs.value;
   return jobs.value?.filter((job: Job) => job.status === selectedStatus.value);
 });
 </script>

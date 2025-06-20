@@ -1,22 +1,24 @@
 <template>
-  <td class="px-6 py-4 font-medium text-gray-900">
-    {{ job.company }}
-  </td>
-  <td class="px-6 py-4">{{ job.title }}</td>
-  <td class="px-6 py-4">
-    <span
-      class="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold"
-      :class="getStatusStyle(job.status)"
-    >
-      {{ job.status }}
-    </span>
-  </td>
-  <td class="px-6 py-4">{{ formatDate(job.dateApplied) }}</td>
-  <td class="px-6 py-4">
-    <a :href="job.url" target="_blank" class="text-blue-600 hover:underline">
-      View
-    </a>
-  </td>
+  <tr class="border-b hover:bg-gray-50 transition-colors">
+    <td class="px-6 py-4 font-medium text-gray-900">
+      {{ job.company }}
+    </td>
+    <td class="px-6 py-4">{{ job.title }}</td>
+    <td class="px-6 py-4">
+      <span
+        class="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold"
+        :class="getStatusStyle(job.status)"
+      >
+        {{ job.status }}
+      </span>
+    </td>
+    <td class="px-6 py-4">{{ formatDate(job.dateApplied) }}</td>
+    <td class="px-6 py-4">
+      <a :href="job.url" target="_blank" class="text-blue-600 hover:underline">
+        View
+      </a>
+    </td>
+  </tr>
 </template>
 <script setup lang="ts">
 defineProps<{
